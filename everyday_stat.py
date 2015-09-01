@@ -1,26 +1,26 @@
 # -*- coding: utf8 -*-
-__author__ = 'work';
+__author__ = 'alkarps'
 
 if __name__ == '__main__':
-    from multiprocessing import Process, Manager;
-    import mail;
-    import everyday_stat_settingfile as sf;
-    import everyday_stat_process as proc;
-    import Logger;
-    Logger.initLogger(sf.name_logfile, sf.logger_name)
-    Logger.info("Start formatting statistic");
-    manager = Manager();
-    dicTable = manager.dict();
-    processList = [];
-    Logger.info("Start threads");
+    from multiprocessing import Process, Manager
+    import mail
+    import everyday_stat_settingfile as sf
+    import everyday_stat_process as proc
+    import Logger
+    Logger.initLogger(sf.loggerSetting[0], sf.loggerSetting[1])
+    Logger.info("Start formatting statistic")
+    manager = Manager()
+    dicTable = manager.dict()
+    processList = []
+    Logger.info("Start threads")
     for setting in sf.start_connect_param:
-        process = Process(target=proc.formatStat, args=(dicTable, setting));
-        processList.append(process);
-        process.start();
+        process = Process(target=proc.formatStat, args=(dicTable, setting, sf.loggerSetting))
+        processList.append(process)
+        process.start()
     for process in processList:
-        process.join();
-    Logger.info("Finish threads");
-    Logger.info("Start building text mail");
+        process.join()
+    Logger.info("Finish threads")
+    Logger.info("Start building text mail")
     emailText = """<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -56,15 +56,14 @@ if __name__ == '__main__':
                 <tr>
                     <th>all</th>
                     <th>processed</th>
-                </tr>""";
-    keys = dicTable.keys();
-    errorTables = "";
+                </tr>"""
+    keys = dicTable.keys()
+    errorTables = ""
     for key in keys:
-        emailText = emailText + dicTable[key][0];
-        errorTables += dicTable[key][1] + "<br>";
-    emailText += "</table>\n" + errorTables + "</body></html>";
-    Logger.info("Finish building text mail");
-    if(len(dicTable)!=0):
-        Logger.info("Start sending mail");
-        mail.sent_mail(text=emailText, to=sf.to, subj=sf.subject, toView=sf.toView);
-        Logger.info("Finish sending mail");
+        emailText = emailText + dicTable[key][0]
+        errorTables += dicTable[key][1] + "<br>"
+    emailText += "</table>\n" + errorTables + "</body></html>"
+    Logger.info("Finish building text mail")
+    Logger.info("Start sending mail")
+    mail.sent_mail(text=emailText, to=sf.to, subj=sf.subject, toView=sf.toView)
+    Logger.info("Finish sending mail")
