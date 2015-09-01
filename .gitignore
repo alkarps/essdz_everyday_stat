@@ -1,0 +1,8 @@
+/mail.py
+/utils.py
+/oracle11g.py
+/mailsettings.py
+/everyday_stat_settingfile.py
+.idea
+*.pyc
+*.log
