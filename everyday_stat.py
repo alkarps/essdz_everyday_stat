@@ -7,6 +7,8 @@ if __name__ == '__main__':
     import everyday_stat_settingfile as sf
     import everyday_stat_process as proc
     import Logger
+    import os
+    os.putenv('ORACLE_HOME', '/home/coder/rcuHome/');
     Logger.initLogger(sf.loggerSetting[0], sf.loggerSetting[1])
     Logger.info("Start formatting statistic")
     manager = Manager()
