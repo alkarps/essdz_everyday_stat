@@ -7,13 +7,7 @@ def formatStat(dicTable, setting, loggerSetting):
     import Logger
     try:
         Logger.initLogger(loggerSetting[0],loggerSetting[1])
-        login = setting[0]
-        password = setting[1]
-        host = setting[2]
-        port = setting[3]
-        sid = setting[4]
-        servicename = setting[5]
-        name = setting[6]
+        login, password, host, port, sid, servicename, name = setting
         Logger.info("Start formatting zubaTable for " + name)
         result = []
         # Собирание строки для таблицы Зубарева
@@ -35,9 +29,9 @@ def formatStat(dicTable, setting, loggerSetting):
         e.LASTPROCESSINGTIME BETWEEN trunc(SYSDATE-1,'HH24') and trunc(SYSDATE,'HH24')-1/86400
         group by e.entitytypeid, me.name, e.operationtype, e.processingstatus, e.error_descr order by e.entitytypeid, e.operationtype, e.processingstatus"""
         statTables = utils.getResultByQuery(login, password, host, port, sid, servicename, query)
-        mdmError = unicode(u"""<table><tr><th>ID сущности</th><th>Название сущности</th><th>Операция</th><th>Статус</th><th>Описание ошибки</th><th>Количество</th></tr>""", "utf8")
-        mdmProxyError = unicode(u"""<table><tr><th>ID сущности</th><th>Название сущности</th><th>Операция</th><th>Статус</th><th>Описание ошибки</th><th>Количество</th></tr>""", "utf8")
-        asrError = unicode(u"""<table><tr><th>ID сущности</th><th>Название сущности</th><th>Операция</th><th>Статус</th><th>Описание ошибки</th><th>Количество</th></tr>""", "utf8")
+        mdmError = """<table><tr><th>ID сущности</th><th>Название сущности</th><th>Операция</th><th>Статус</th><th>Описание ошибки</th><th>Количество</th></tr>"""
+        mdmProxyError = """<table><tr><th>ID сущности</th><th>Название сущности</th><th>Операция</th><th>Статус</th><th>Описание ошибки</th><th>Количество</th></tr>"""
+        asrError = """<table><tr><th>ID сущности</th><th>Название сущности</th><th>Операция</th><th>Статус</th><th>Описание ошибки</th><th>Количество</th></tr>"""
         for row in statTables:
             tmp = '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td></tr>'.format(str(row[0]),str(row[1]),str(row[2]),str(row[3]),str(row[4]),str(row[5]))
             if 'ASRAdapter' in row[4]:
@@ -49,7 +43,7 @@ def formatStat(dicTable, setting, loggerSetting):
         mdmError += '</table>'
         mdmProxyError += '</table>'
         asrError += '</table>'
-        stat = '<h2>' + name + '</h2>' + '</br>' + '<h2> MDM error </h2>' + mdmError + '<h2> MDMProxy error </h2>' + mdmProxyError + '<h2> ASRAdapter error </h2>' + asrError
+        stat = '<h2>' + name + '</h2></br><h2> MDM error </h2>' + mdmError + '<h2> MDMProxy error </h2>' + mdmProxyError + '<h2> ASRAdapter error </h2>' + asrError
         result.append(stat)
         Logger.info("Add to dic for " + name)
         # Передача в основной поток
